@@ -1,1 +1,81 @@
-content from convection2.html with units and home link
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convection Calculator | Heat Transfer Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="p-4 border-b border-gray-700 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Convection Calculator</h1>
+    <a href="index.html" class="text-blue-400 hover:underline">← Back to Home</a>
+  </header>
+  <main class="px-4 py-10 max-w-xl mx-auto">
+    <h2 class="text-3xl font-semibold mb-6">Newton's Law of Cooling</h2>
+    <form id="convection-form" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow">
+      <div>
+        <label class="block mb-1">Heat Transfer Coefficient (h)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="h" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="h-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="W/m²·K">W/m²·K</option>
+            <option value="BTU/hr·ft²·F">BTU/hr·ft²·°F</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Area (A)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="area" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="area-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="m²">m²</option>
+            <option value="cm²">cm²</option>
+            <option value="in²">in²</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Temperature Difference (ΔT)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="deltaT" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="deltaT-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="K">K</option>
+            <option value="°C">°C</option>
+            <option value="°F">°F</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Calculate</button>
+    </form>
+    <div id="result" class="mt-6 text-lg font-medium text-green-400"></div>
+  </main>
+  <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-700 mt-12">
+    © 2025 Heat Transfer Hub.
+  </footer>
+  <script>
+    const convertH = (value, unit) => unit === "W/m²·K" ? value : value * 5.678263;
+    const convertArea = (value, unit) => {
+      if (unit === "m²") return value;
+      if (unit === "cm²") return value / 10000;
+      if (unit === "in²") return value * 0.00064516;
+    };
+    const convertTempDiff = (value, unit) => {
+      if (unit === "K" || unit === "°C") return value;
+      if (unit === "°F") return value * (5 / 9);
+    };
+    document.getElementById('convection-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const h = convertH(parseFloat(document.getElementById('h').value), document.getElementById('h-unit').value);
+      const A = convertArea(parseFloat(document.getElementById('area').value), document.getElementById('area-unit').value);
+      const deltaT = convertTempDiff(parseFloat(document.getElementById('deltaT').value), document.getElementById('deltaT-unit').value);
+      if (h > 0 && A > 0) {
+        const Q = h * A * deltaT;
+        document.getElementById('result').textContent = `Heat Transfer Rate (Q): ${Q.toFixed(2)} W`;
+      } else {
+        document.getElementById('result').textContent = 'Please enter valid numbers.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,1 +1,81 @@
-content from heatexchanger2.html with units and home link
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heat Exchanger Sizing | Heat Transfer Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="p-4 border-b border-gray-700 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Heat Exchanger Sizing</h1>
+    <a href="index.html" class="text-blue-400 hover:underline">← Back to Home</a>
+  </header>
+  <main class="px-4 py-10 max-w-xl mx-auto">
+    <h2 class="text-3xl font-semibold mb-6">A = Q / (U × ΔT<sub>lm</sub>)</h2>
+    <form id="hex-form" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow">
+      <div>
+        <label class="block mb-1">Overall Heat Transfer Coefficient (U)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="U" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="U-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="W/m²·K">W/m²·K</option>
+            <option value="BTU/hr·ft²·F">BTU/hr·ft²·°F</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Heat Duty (Q)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="Q" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="Q-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="W">W</option>
+            <option value="kW">kW</option>
+            <option value="BTU/hr">BTU/hr</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block mb-1">Temperature Difference (ΔT<sub>lm</sub>)</label>
+        <div class="flex gap-2">
+          <input type="number" step="any" id="deltaTlm" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="deltaTlm-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="K">K</option>
+            <option value="°C">°C</option>
+            <option value="°F">°F</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Calculate Area</button>
+    </form>
+    <div id="result" class="mt-6 text-lg font-medium text-green-400"></div>
+  </main>
+  <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-700 mt-12">
+    © 2025 Heat Transfer Hub.
+  </footer>
+  <script>
+    const convertQ = (value, unit) => {
+      if (unit === "W") return value;
+      if (unit === "kW") return value * 1000;
+      if (unit === "BTU/hr") return value * 0.293071;
+    };
+    const convertU = (value, unit) => unit === "W/m²·K" ? value : value * 5.678263;
+    const convertDeltaT = (value, unit) => {
+      if (unit === "K" || unit === "°C") return value;
+      if (unit === "°F") return value * (5 / 9);
+    };
+    document.getElementById('hex-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const Q = convertQ(parseFloat(document.getElementById('Q').value), document.getElementById('Q-unit').value);
+      const U = convertU(parseFloat(document.getElementById('U').value), document.getElementById('U-unit').value);
+      const deltaTlm = convertDeltaT(parseFloat(document.getElementById('deltaTlm').value), document.getElementById('deltaTlm-unit').value);
+      if (Q > 0 && U > 0 && deltaTlm !== 0) {
+        const A = Q / (U * deltaTlm);
+        document.getElementById('result').textContent = `Required Area: ${A.toFixed(2)} m²`;
+      } else {
+        document.getElementById('result').textContent = 'Please enter valid numbers.';
+      }
+    });
+  </script>
+</body>
+</html>
