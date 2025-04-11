@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Heat Exchanger Sizing | Heat Transfer Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -11,19 +11,16 @@
     <h1 class="text-2xl font-bold">Heat Exchanger Sizing</h1>
     <a href="index.html" class="text-blue-400 hover:underline">← Back to Home</a>
   </header>
+
   <main class="px-4 py-10 max-w-xl mx-auto">
-    <h2 class="text-3xl font-semibold mb-6">A = Q / (U × ΔT<sub>lm</sub>)</h2>
+    <h2 class="text-3xl font-semibold mb-4">Estimate Required Surface Area</h2>
+    <p class="text-gray-300 mb-6">
+      This tool calculates the required surface area for a heat exchanger using the total heat duty, 
+      overall heat transfer coefficient, and the log mean temperature difference (ΔT<sub>lm</sub>). 
+      It is commonly used in process equipment like condensers, boilers, and energy recovery systems.
+    </p>
+
     <form id="hex-form" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow">
-      <div>
-        <label class="block mb-1">Overall Heat Transfer Coefficient (U)</label>
-        <div class="flex gap-2">
-          <input type="number" step="any" id="U" class="w-full p-2 rounded bg-gray-700 text-white" required>
-          <select id="U-unit" class="p-2 rounded bg-gray-700 text-white">
-            <option value="W/m²·K">W/m²·K</option>
-            <option value="BTU/hr·ft²·F">BTU/hr·ft²·°F</option>
-          </select>
-        </div>
-      </div>
       <div>
         <label class="block mb-1">Heat Duty (Q)</label>
         <div class="flex gap-2">
@@ -35,24 +32,67 @@
           </select>
         </div>
       </div>
+
       <div>
-        <label class="block mb-1">Temperature Difference (ΔT<sub>lm</sub>)</label>
+        <label class="block mb-1">Overall Heat Transfer Coefficient (U)</label>
         <div class="flex gap-2">
-          <input type="number" step="any" id="deltaTlm" class="w-full p-2 rounded bg-gray-700 text-white" required>
-          <select id="deltaTlm-unit" class="p-2 rounded bg-gray-700 text-white">
-            <option value="K">K</option>
-            <option value="°C">°C</option>
-            <option value="°F">°F</option>
+          <input type="number" step="any" id="U" class="w-full p-2 rounded bg-gray-700 text-white" required>
+          <select id="U-unit" class="p-2 rounded bg-gray-700 text-white">
+            <option value="W/m²·K">W/m²·K</option>
+            <option value="BTU/hr·ft²·F">BTU/hr·ft²·°F</option>
           </select>
         </div>
       </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block mb-1">Hot Fluid Inlet (°C)</label>
+          <input type="number" step="any" id="Th_in" class="w-full p-2 rounded bg-gray-700 text-white" required>
+        </div>
+        <div>
+          <label class="block mb-1">Hot Fluid Outlet (°C)</label>
+          <input type="number" step="any" id="Th_out" class="w-full p-2 rounded bg-gray-700 text-white" required>
+        </div>
+        <div>
+          <label class="block mb-1">Cold Fluid Inlet (°C)</label>
+          <input type="number" step="any" id="Tc_in" class="w-full p-2 rounded bg-gray-700 text-white" required>
+        </div>
+        <div>
+          <label class="block mb-1">Cold Fluid Outlet (°C)</label>
+          <input type="number" step="any" id="Tc_out" class="w-full p-2 rounded bg-gray-700 text-white" required>
+        </div>
+      </div>
+
       <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Calculate Area</button>
     </form>
+
     <div id="result" class="mt-6 text-lg font-medium text-green-400"></div>
   </main>
+
+  <section class="max-w-2xl mx-auto px-4 py-8 text-gray-300">
+    <h3 class="text-2xl font-semibold mb-4">Explanation</h3>
+    <p>The log mean temperature difference (ΔT<sub>lm</sub>) represents the average driving force for heat exchange 
+    when the temperature difference varies along the length of the exchanger.</p>
+    <p class="mt-2">It is calculated as:</p>
+    <pre class="bg-gray-800 p-4 rounded overflow-x-auto mt-2 mb-4">ΔT<sub>lm</sub> = (ΔT1 - ΔT2) / ln(ΔT1 / ΔT2)</pre>
+    <ul class="list-disc list-inside text-sm space-y-1 text-gray-400">
+      <li>ΔT1 = Th<sub>in</sub> - Tc<sub>out</sub></li>
+      <li>ΔT2 = Th<sub>out</sub> - Tc<sub>in</sub></li>
+    </ul>
+  
+    <h4 class="text-xl font-semibold mt-6 mb-2">What is the Overall Heat Transfer Coefficient (U)?</h4>
+    <p class="text-gray-400 text-sm">
+      The overall heat transfer coefficient (U) quantifies how effectively heat is transferred across all components of a heat exchanger. 
+      It includes resistances from fluid convection on both sides and conduction through solid walls or tubes, as well as any fouling layers.
+      U is usually given in W/m²·K or BTU/hr·ft²·°F.
+    </p>
+    </section>
+    
+
   <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-700 mt-12">
     © 2025 Heat Transfer Hub.
   </footer>
+
   <script>
     const convertQ = (value, unit) => {
       if (unit === "W") return value;
@@ -60,21 +100,30 @@
       if (unit === "BTU/hr") return value * 0.293071;
     };
     const convertU = (value, unit) => unit === "W/m²·K" ? value : value * 5.678263;
-    const convertDeltaT = (value, unit) => {
-      if (unit === "K" || unit === "°C") return value;
-      if (unit === "°F") return value * (5 / 9);
-    };
+
     document.getElementById('hex-form').addEventListener('submit', function (e) {
       e.preventDefault();
+
       const Q = convertQ(parseFloat(document.getElementById('Q').value), document.getElementById('Q-unit').value);
       const U = convertU(parseFloat(document.getElementById('U').value), document.getElementById('U-unit').value);
-      const deltaTlm = convertDeltaT(parseFloat(document.getElementById('deltaTlm').value), document.getElementById('deltaTlm-unit').value);
-      if (Q > 0 && U > 0 && deltaTlm !== 0) {
-        const A = Q / (U * deltaTlm);
-        document.getElementById('result').textContent = `Required Area: ${A.toFixed(2)} m²`;
-      } else {
-        document.getElementById('result').textContent = 'Please enter valid numbers.';
+
+      const Th_in = parseFloat(document.getElementById('Th_in').value);
+      const Th_out = parseFloat(document.getElementById('Th_out').value);
+      const Tc_in = parseFloat(document.getElementById('Tc_in').value);
+      const Tc_out = parseFloat(document.getElementById('Tc_out').value);
+
+      const deltaT1 = Th_in - Tc_out;
+      const deltaT2 = Th_out - Tc_in;
+
+      if (deltaT1 <= 0 || deltaT2 <= 0 || Q <= 0 || U <= 0) {
+        document.getElementById('result').textContent = 'Check that all values are positive and temperatures are ordered properly.';
+        return;
       }
+
+      const deltaTlm = (deltaT1 - deltaT2) / Math.log(deltaT1 / deltaT2);
+      const A = Q / (U * deltaTlm);
+
+      document.getElementById('result').textContent = `Required Area: ${A.toFixed(2)} m² (ΔTlm = ${deltaTlm.toFixed(2)} °C)`;
     });
   </script>
 </body>

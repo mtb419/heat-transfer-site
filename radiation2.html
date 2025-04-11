@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Radiation Calculator | Heat Transfer Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -11,13 +11,21 @@
     <h1 class="text-2xl font-bold">Radiation Calculator</h1>
     <a href="index.html" class="text-blue-400 hover:underline">← Back to Home</a>
   </header>
+
   <main class="px-4 py-10 max-w-xl mx-auto">
-    <h2 class="text-3xl font-semibold mb-6">Stefan-Boltzmann Law</h2>
+    <h2 class="text-3xl font-semibold mb-4">Stefan-Boltzmann Law</h2>
+    <p class="text-gray-300 mb-6">
+      This calculator estimates radiative heat transfer between a surface and its surroundings using 
+      the Stefan–Boltzmann Law. It’s used for thermal radiation from high-temperature equipment like furnaces, 
+      space heaters, and heat shields.
+    </p>
+
     <form id="radiation-form" class="space-y-4 bg-gray-800 p-6 rounded-lg shadow">
       <div>
         <label class="block mb-1">Emissivity (ε)</label>
         <input type="number" step="any" id="emissivity" class="w-full p-2 rounded bg-gray-700 text-white" min="0" max="1" required>
       </div>
+
       <div>
         <label class="block mb-1">Area (A)</label>
         <div class="flex gap-2">
@@ -29,8 +37,9 @@
           </select>
         </div>
       </div>
+
       <div>
-        <label class="block mb-1">Surface Temperature (T₁)</label>
+        <label class="block mb-1">Surface Temperature (°)</label>
         <div class="flex gap-2">
           <input type="number" step="any" id="T1" class="w-full p-2 rounded bg-gray-700 text-white" required>
           <select id="T1-unit" class="p-2 rounded bg-gray-700 text-white">
@@ -40,8 +49,9 @@
           </select>
         </div>
       </div>
+
       <div>
-        <label class="block mb-1">Surrounding Temperature (T₂)</label>
+        <label class="block mb-1">Surrounding Temperature (°)</label>
         <div class="flex gap-2">
           <input type="number" step="any" id="T2" class="w-full p-2 rounded bg-gray-700 text-white" required>
           <select id="T2-unit" class="p-2 rounded bg-gray-700 text-white">
@@ -51,25 +61,30 @@
           </select>
         </div>
       </div>
+
       <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded">Calculate</button>
     </form>
+
     <div id="result" class="mt-6 text-lg font-medium text-green-400"></div>
   </main>
+
   <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-700 mt-12">
     © 2025 Heat Transfer Hub.
   </footer>
+
   <script>
     const σ = 5.670374419e-8;
     const convertTempToK = (value, unit) => {
       if (unit === "K") return value;
       if (unit === "°C") return value + 273.15;
-      if (unit === "°F") return (value - 32) * (5 / 9) + 273.15;
+      if (unit === "°F") return (value - 32) * 5 / 9 + 273.15;
     };
     const convertArea = (value, unit) => {
       if (unit === "m²") return value;
       if (unit === "cm²") return value / 10000;
       if (unit === "in²") return value * 0.00064516;
     };
+
     document.getElementById('radiation-form').addEventListener('submit', function (e) {
       e.preventDefault();
       const ε = parseFloat(document.getElementById('emissivity').value);
